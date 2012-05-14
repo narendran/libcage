@@ -37,11 +37,6 @@ void createCage(char * portnum){
 	std::cout<<"\nLog : Out of createCage\n";
 }
 
-BOOST_PYTHON_MODULE(libcage){
-	using namespace boost::python;
-	def("createCage",createCage);
-}
-
 void join_callback(bool result){
 	if(result)
 		std::cout<<"Join Success";
@@ -56,6 +51,16 @@ void join(char * host, char * port){
 	int dest_port = atoi(port);
 	cage->join(host,dest_port,&join_callback);
 }
+
+/*
+ * Following module generates the python wrappers
+ */
+BOOST_PYTHON_MODULE(libcagepeers){
+	using namespace boost::python;
+	def("createCage",createCage);
+	def("join",join);
+}
+
 
 int main(int argc, char **argv)
 {
