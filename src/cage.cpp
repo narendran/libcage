@@ -347,7 +347,7 @@ namespace libcage {
                 std::string str;
 
                 str = m_id.to_string();
-                printf("MyID = %s\n\n", str.c_str());
+                printf("\nMyID = %s\n\n", str.c_str());
 
                 printf("Node State:\n");
 

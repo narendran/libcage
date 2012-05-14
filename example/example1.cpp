@@ -70,7 +70,7 @@ main(int argc, char *argv[])
                 cage->join(argv[2], dst_port, &join_callback);
         }
 
-
+        cage->print_state();
         // handle event loop
         event_dispatch();
 

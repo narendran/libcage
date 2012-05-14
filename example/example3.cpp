@@ -1,17 +1,19 @@
 #include <stdlib.h>
 #include <iostream>
-
+#include <sys/time.h>
 #include <boost/foreach.hpp>
-
+#include <fstream>
 // include libevent's header
 #include <event.h>
 
 // include libcage's header
 #include <libcage/cage.hpp>
-
-const int max_node = 100;
+using namespace std;
+const int max_node = 30;
 const int port     = 10000;
 libcage::cage *cage;
+struct timeval start;
+ofstream timelog;
 event *ev;
 
 // callback function for get
@@ -72,6 +74,7 @@ public:
 
         void operator() (bool result)
         {
+        		timelog.open("jointimes.txt",ios::app);
                 // print state
                 if (result)
                         std::cout << "join: succeeded, n = "
@@ -99,6 +102,8 @@ public:
                         }
 
                         cage[n].join("localhost", 10000, *this);
+                        gettimeofday(&start,NULL);
+                        timelog<<"\n"<<start.tv_sec<<"\t"<<start.tv_usec<<"\n";
                 } else {
                         // start timer
                         timeval tval;
@@ -111,6 +116,7 @@ public:
                         evtimer_set(ev, timer_callback, NULL);
                         evtimer_add(ev, &tval);
                 }
+                timelog.close();
         }
 };
 
@@ -126,6 +132,7 @@ main(int argc, char *argv[])
         // initialize libevent
         event_init();
 
+        timelog.open("jointimes.txt",ios::out|ios::trunc);
         cage = new libcage::cage[max_node];
 
         // start bootstrap node
@@ -136,8 +143,8 @@ main(int argc, char *argv[])
                 return -1;
         }
         cage[0].set_global();
-
-
+        gettimeofday(&start,NULL);
+        timelog<<"\n"<<start.tv_sec<<"\t"<<start.tv_usec<<"\n";
         // start other nodes
         join_callback func;
         func.n = 1;
@@ -154,6 +161,6 @@ main(int argc, char *argv[])
 
         // handle event loop
         event_dispatch();
-
+        timelog.close();
         return 0;
 }
