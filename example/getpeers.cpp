@@ -8,8 +8,10 @@
 #include <iostream>
 #include <event.h>
 #include <stdlib.h>
+#include <exception>
 #include <libcage/cage.hpp>
 #include <boost/python.hpp>
+#include <boost/thread.hpp>
 
 libcage::cage *cage;
 
@@ -17,26 +19,30 @@ void printPeers(){
 	cage->print_state();
 }
 
+void openCage_firstnode(char * portnum){
+		event_init();
+		int port = atoi(portnum);
+		cage = new libcage::cage;
+		std::cout<<"\nAbout to start cage on port "<<port<<"\n";
+		try
+		{
+			if(!cage->open(PF_INET,port))
+			{
+				std::cout<<"Could not open port for P2P routing communication\n";
+				return;
+			}
+		}catch(std::exception &e){
+			std::cout<<"Port cannot be opened due to an exception. Message : "<<e.what()<<"\n";
+		}
+		std::cout<<"Cage instance listening on port "<<port;
+		cage->set_global();
+		std::cout<<"\nLog : Out of createCage\n";
+		event_dispatch();
+}
+
 void createCage_firstnode(char * portnum){
 	std::cout<<"\nLog : Into createCage\n";
-	event_init();
-	int port = atoi(portnum);
-	cage = new libcage::cage;
-	std::cout<<"\nAbout to start cage on port "<<port<<"\n";
-	// Open a port for other nodes to communicate
-	/*
-	 * TODO : Get IP, port number and if it should be stored in DTUN
-	 * for now make it default to 10000. Later get the parameters from ICM agent
-	 */
-	if(!cage->open(PF_INET,port))
-	{
-		std::cout<<"Could not open port for P2P routing communication\n";
-		return;
-	}
-	std::cout<<"Cage instance listening on port "<<port;
-	cage->set_global();
-	event_dispatch();
-	std::cout<<"\nLog : Out of createCage\n";
+	boost::thread workerThread(openCage_firstnode,portnum);
 	return;
 }
 
@@ -48,28 +54,34 @@ void join_callback(bool result){
 	printPeers();
 }
 
+void openCage_joinnode(char * portnum,char * host, char * destination_port){
+		event_init();
+		int port = atoi(portnum);
+		cage = new libcage::cage;
+		std::cout<<"\nAbout to start cage on port "<<port<<"\n";
+		// Open a port for other nodes to communicate
+		/*
+		 * TODO : Get IP, port number and if it should be stored in DTUN
+		 * for now make it default to 10000. Later get the parameters from ICM agent
+		 */
+		if(!cage->open(PF_INET,port))
+		{
+			std::cout<<"Could not open port for P2P routing communication\n";
+			return;
+		}
+		std::cout<<"Cage instance listening on port "<<port;
+		cage->set_global();
+		std::cout<<"\nLog : Enter Join network";
+		int dest_port = atoi(destination_port);
+		cage->join(host,dest_port,&join_callback);
+		event_dispatch();
+}
+
 void createCage_joinnode(char * portnum,char * host, char * destination_port){
 	std::cout<<"\nLog : Into createCage\n";
-	event_init();
-	int port = atoi(portnum);
-	cage = new libcage::cage;
-	std::cout<<"\nAbout to start cage on port "<<port<<"\n";
-	// Open a port for other nodes to communicate
-	/*
-	 * TODO : Get IP, port number and if it should be stored in DTUN
-	 * for now make it default to 10000. Later get the parameters from ICM agent
-	 */
-	if(!cage->open(PF_INET,port))
-	{
-		std::cout<<"Could not open port for P2P routing communication\n";
-		return;
-	}
-	std::cout<<"Cage instance listening on port "<<port;
-	cage->set_global();
-	std::cout<<"\nLog : Enter Join network";
-	int dest_port = atoi(destination_port);
-	cage->join(host,dest_port,&join_callback);
-	event_dispatch();
+	boost::thread workerThread(openCage_joinnode,portnum,host,destination_port);
+	std::cout<<"\nLog : OUt of createCage\n";
+
 }
 
 /*
@@ -81,25 +93,7 @@ BOOST_PYTHON_MODULE(libcagepeers){
 	def("createCage_joinnode",createCage_joinnode);
 }
 
+int main(int argc, char **argv){
 
-int main(int argc, char **argv)
-{
-	// One module for creating the global cage instance
-	// One module to return the list of peers present in cage instance in the form of an STL list
-
-	/*createCage(argv[1]);
-	if(argc>=4)
-	{
-		std::cout<<"\nMore parameters detected";
-		join(argv[2],argv[3]);
-	}
-	else
-	{
-		printPeers();
-	}
-
-	return 0;*/
 }
-
-
 

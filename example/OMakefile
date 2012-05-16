@@ -1,5 +1,5 @@
 CXXFLAGS += -Wall -I../include -I/usr/include/python2.7 -L/usr/local/lib
-LDFLAGS += -lcrypto -lpython2.7 -lboost_python
+LDFLAGS += -lcrypto -lpython2.7 -lboost_python -lboost_thread
 LIBS += ../src/libcage
 
 
