@@ -84,6 +84,11 @@ void createCage_joinnode(char * portnum,char * host, char * destination_port){
 
 }
 
+int getPort()
+{
+	return cage->get_port();
+}
+
 /*
  * Following module generates the python wrappers
  */
@@ -91,6 +96,7 @@ BOOST_PYTHON_MODULE(libcagepeers){
 	using namespace boost::python;
 	def("createCage_firstnode",createCage_firstnode);
 	def("createCage_joinnode",createCage_joinnode);
+	def("getPort",getPort);
 }
 
 int main(int argc, char **argv){

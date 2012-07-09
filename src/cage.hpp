@@ -95,6 +95,8 @@ namespace libcage {
                 //     automatically divided and then deliverd to the
                 //     destination unlike UDP.
                 //     The destination node should be receive multiple times.
+
+                int 			get_port();
                 void            send_dgram(const void *buf, int len,
                                            uint8_t *dst);
                 void            set_dgram_callback(dgram::callback func);

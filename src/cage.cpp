@@ -267,6 +267,15 @@ namespace libcage {
 
         }
 
+        int
+        cage::get_port()
+        {
+        	/*int cagePort = m_udp.get_port();
+        	printf("Cage Port : %d", cagePort);
+        	return cagePort;*/
+        	return 20000;
+        }
+
         void
         cage::set_id(const char *buf, int len)
         {

@@ -346,6 +346,7 @@ namespace libcage {
         uint16_t
         udphandler::get_port()
         {
+        		printf("Testing library code");
                 if (!m_opened)
                         return 0;
 

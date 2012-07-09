@@ -51,7 +51,7 @@ if $(equal $(DEBUG), TRUE)
 	CXXFLAGS += -O0 -g
 	export
 else
-	CXXFLAGS += -O3 -L/home/sunshadow/Software/BoostInstall/lib 
+	CXXFLAGS += -O3
 	export
 
 clean:
