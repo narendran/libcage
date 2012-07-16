@@ -391,6 +391,10 @@ namespace libcage {
                 m_dht.print_table();
         }
 
+        std::vector<std::string> cage::get_Peerlist(){
+        	return m_dht.get_Peerlist();
+        }
+
         bool
         cage::open(int domain, uint16_t port, bool is_dtun)
         {

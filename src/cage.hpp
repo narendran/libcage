@@ -114,7 +114,7 @@ namespace libcage {
                 void            set_id(const char *buf, int len);
 
                 void            print_state() const;
-
+                std::vector<std::string> get_Peerlist();
 
         private:
                 class udp_receiver : public udphandler::callback {

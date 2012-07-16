@@ -9,6 +9,8 @@
 #include <event.h>
 #include <stdlib.h>
 #include <exception>
+#include <string>
+#include <vector>
 #include <libcage/cage.hpp>
 #include <boost/python.hpp>
 #include <boost/thread.hpp>
@@ -89,6 +91,30 @@ int getPort()
 	return cage->get_port();
 }
 
+std::vector<std::string>  getPeers()
+{
+	std::cout<<"Log : Entered into getPeers function";
+	return cage->get_Peerlist();
+}
+
+/*
+ * Vector to Python List converter
+ */
+
+template<class T>
+struct VecToList
+{
+    static PyObject* convert(const std::vector<T>& vec)
+    {
+        boost::python::list* l = new boost::python::list();
+        for(size_t i = 0; i < vec.size(); i++)
+            (*l).append(vec[i]);
+
+        return l->ptr();
+    }
+};
+
+
 /*
  * Following module generates the python wrappers
  */
@@ -97,6 +123,8 @@ BOOST_PYTHON_MODULE(libcagepeers){
 	def("createCage_firstnode",createCage_firstnode);
 	def("createCage_joinnode",createCage_joinnode);
 	def("getPort",getPort);
+	to_python_converter<std::vector<std::string,class std::allocator<std::string> >, VecToList<std::string> >();
+	def("getPeers",getPeers);
 }
 
 int main(int argc, char **argv){
