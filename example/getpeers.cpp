@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <event.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <exception>
 #include <string>
@@ -69,7 +70,8 @@ void openCage_joinnode(char * portnum,char * host, char * destination_port){
 		if(!cage->open(PF_INET,port))
 		{
 			std::cout<<"Could not open port for P2P routing communication\n";
-			return;
+			sprintf(portnum,"%d",port+1);
+			openCage_joinnode(portnum,host,destination_port);
 		}
 		std::cout<<"Cage instance listening on port "<<port;
 		cage->set_global();
@@ -94,6 +96,7 @@ int getPort()
 std::vector<std::string>  getPeers()
 {
 	std::cout<<"Log : Entered into getPeers function";
+	printf("Size of peer list in libcage from getPeerlist function is %d",cage->get_Peerlist().size());
 	return cage->get_Peerlist();
 }
 
@@ -107,12 +110,14 @@ struct VecToList
     static PyObject* convert(const std::vector<T>& vec)
     {
         boost::python::list* l = new boost::python::list();
+        printf("Size of peer list in libcage is %d",vec.size());
         for(size_t i = 0; i < vec.size(); i++)
             (*l).append(vec[i]);
 
         return l->ptr();
     }
 };
+
 
 
 /*
