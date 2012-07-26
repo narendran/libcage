@@ -32,6 +32,8 @@ void openCage_firstnode(char * portnum){
 			if(!cage->open(PF_INET,port))
 			{
 				std::cout<<"Could not open port for P2P routing communication\n";
+				sprintf(portnum,"%d",port+1);
+				openCage_firstnode(portnum);
 				return;
 			}
 		}catch(std::exception &e){
