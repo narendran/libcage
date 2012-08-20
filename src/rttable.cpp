@@ -419,11 +419,12 @@ namespace libcage {
         std::vector<std::string> rttable::get_Peerlist(){
         	std::vector<std::string> peerlist;
         	std::string str;
-        	std::string peer;
+
         	std::map<int, std::list<cageaddr> >::const_iterator i;
         	std::list<cageaddr>::const_iterator                 j;
 
         	for (i = m_table.begin(); i != m_table.end(); ++i) {
+        							std::string peer;
         	                        const std::list<cageaddr> &row = i->second;
         	                        printf("  i = %d\n", i->first);
 
