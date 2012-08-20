@@ -22,9 +22,9 @@ void printPeers(){
 	cage->print_state();
 }
 
-void openCage_firstnode(char * portnum){
+void openCage_firstnode(int portnum){
 		event_init();
-		int port = atoi(portnum);
+		int port = portnum;
 		cage = new libcage::cage;
 		std::cout<<"\nAbout to start cage on port "<<port<<"\n";
 		try
@@ -32,8 +32,8 @@ void openCage_firstnode(char * portnum){
 			if(!cage->open(PF_INET,port))
 			{
 				std::cout<<"Could not open port for P2P routing communication\n";
-				sprintf(portnum,"%d",port+1);
-				openCage_firstnode(portnum);
+				//sprintf(portnum,"%d",port+1);
+				openCage_firstnode(port+1);
 				return;
 			}
 		}catch(std::exception &e){
@@ -45,7 +45,7 @@ void openCage_firstnode(char * portnum){
 		event_dispatch();
 }
 
-void createCage_firstnode(char * portnum){
+void createCage_firstnode(int portnum){
 	std::cout<<"\nLog : Into createCage\n";
 	boost::thread workerThread(openCage_firstnode,portnum);
 	return;
@@ -59,18 +59,19 @@ void join_callback(bool result){
 	printPeers();
 }
 
-void openCage_joinnode(char * portnum,char * host, char * destination_port){
+void openCage_joinnode(int portnum,char * host, int destination_port){
 		event_init();
-		int port = atoi(portnum);
+		int port = portnum;
 		cage = new libcage::cage;
 		std::cout<<"\nAbout to start cage on port "<<port<<"\n";
 		// Open a port for other nodes to communicate
-
+		
+		
 		if(!cage->open(PF_INET,port))
 		{
 			std::cout<<"Could not open port for P2P routing communication\n";
-			sprintf(portnum,"%d",port+1);
-			openCage_joinnode(portnum,host,destination_port);
+			//sprintf(portnum,"%d",port+1);
+			openCage_joinnode(port+1,host,destination_port);
 		}
 		std::cout<<"Cage instance listening on port "<<port;
 		cage->set_global();
@@ -80,7 +81,7 @@ void openCage_joinnode(char * portnum,char * host, char * destination_port){
 		event_dispatch();
 }
 
-void createCage_joinnode(char * portnum,char * host, char * destination_port){
+void createCage_joinnode(int portnum,char * host, int destination_port){
 	std::cout<<"\nLog : Into createCage\n";
 	boost::thread workerThread(openCage_joinnode,portnum,host,destination_port);
 	std::cout<<"\nLog : OUt of createCage\n";
